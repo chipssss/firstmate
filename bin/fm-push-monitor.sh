@@ -3,7 +3,7 @@
 # or one of its PRs needs handling. Runs persistently under Claude Code's Monitor tool, which notifies the
 # primary once per stdout line, so every event is printed as exactly one line:
 #   - a new status line: done, blocked, needs-decision, failed, or a paused line
-#     waiting on the captain's review/approval (routine working/paused/resolved ignored);
+#     waiting on the captain (routine working/paused/resolved ignored);
 #   - a new captain inbox note (e.g. from a chat bridge) not yet seen by this monitor;
 #   - a worker pane (Rex) that is gone, or idle with an unchanged screen for
 #     STALL_SECS while its last status is not a terminal/declared wait;
@@ -40,7 +40,7 @@ emit() {
   [ "$ONCE" = 1 ] && exit 0
   return 0
 }
-waits_on_captain='^paused .*((^|[^p])review|captain|approv|批准|复看)'
+waits_on_captain='^paused .*(captain|approv|批准|复看|验收|拍板)'
 
 case "${1:-}" in
   --baseline)
