@@ -11,7 +11,7 @@ It prints one line, and so wakes the primary, only when something needs firstmat
 - a new status line that is `done`, `blocked`, `needs-decision` or `failed`, or a `paused` line that waits on the captain's review or approval;
 - a new captain inbox note (`state/inbox/*.note`), for example from a chat bridge;
 - a worker Rex pane that is gone, or that shows the same screen for `STALL_SECS` (default 900) while its last status is not a finished state or a declared wait;
-- a GitHub PR named in a live task's status log that merges, closes, turns red, or turns all-green, polled every `PR_SECS` (default 300).
+- a GitHub PR named in a live task's status log that merges, closes, or turns red, polled every `PR_SECS` (default 300).
 
 It also dismisses the agy "[0] Skip" survey that otherwise blocks a worker pane.
 Routine `working`, `resolved` and declared `paused` lines never wake the primary, and an idle fleet costs no tokens.

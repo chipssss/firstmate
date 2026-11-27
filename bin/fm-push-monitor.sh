@@ -8,7 +8,7 @@
 #   - a worker pane (Rex) that is gone, or idle with an unchanged screen for
 #     STALL_SECS while its last status is not a terminal/declared wait;
 #   - a GitHub PR named in a live task's status log that changes state (merged,
-#     closed) or whose checks turn red or all-green, polled every PR_SECS.
+#     closed) or whose checks turn red, polled every PR_SECS.
 # The agy "[0] Skip" survey that blocks a pane is dismissed automatically.
 # While it runs it refreshes state/.push-monitor.beat; with config/push-monitor present and a fresh beat,
 # the Claude Stop hooks (fm-claude-stop-autoarm.sh, fm-turnend-guard.sh) stand aside, and they resume
@@ -138,9 +138,9 @@ check_prs() {
       if [ -z "$old" ]; then
         case "$d" in OPEN\ red) ;; *) continue ;; esac
       fi
+      # Workers merge on green themselves; wake only on a terminal state or a red turn.
       case "$d" in
-        "OPEN pending") continue ;;
-        *) emit "pr-change: $id: $url $old -> $d" ;;
+        MERGED*|CLOSED*|*red) emit "pr-change: $id: $url $old -> $d" ;;
       esac
     done
   done
