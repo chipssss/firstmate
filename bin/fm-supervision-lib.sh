@@ -44,6 +44,17 @@ fm_sup_stat_mtime() {
 #   FM_SUP_QUEUE_PENDING  true/false - state/.wake-queue has unread records
 # grace-seconds defaults to $FM_GUARD_GRACE, then 300, matching fm-guard.sh.
 # Always returns 0; callers read the vars, or use fm_supervision_unhealthy below.
+# fm_push_monitor_owns <state-dir> <config-dir>: true when this home opted into push-only supervision
+# (config/push-monitor present) and bin/fm-push-monitor.sh refreshed its beat within FM_PUSH_MONITOR_GRACE
+# seconds (default 120). The Claude Stop hooks then stand aside; a stale beat hands supervision back to them.
+fm_push_monitor_owns() {
+  local beat="$1/.push-monitor.beat" grace="${FM_PUSH_MONITOR_GRACE:-120}" now mtime
+  [ -e "$2/push-monitor" ] && [ -f "$beat" ] || return 1
+  now=$(date +%s)
+  mtime=$(stat -f %m "$beat" 2>/dev/null || stat -c %Y "$beat" 2>/dev/null) || return 1
+  [ $(( now - mtime )) -le "$grace" ]
+}
+
 fm_supervision_status() {
   local state=$1 grace=${2:-${FM_GUARD_GRACE:-300}} meta source check id beat m age
   FM_SUP_IN_FLIGHT=0

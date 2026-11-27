@@ -267,6 +267,9 @@ fi
 # --- AFK: the away daemon owns the watcher and triage; never rewake ----------
 [ -e "$STATE/.afk" ] && exit 0
 
+# --- push-only supervision: a live bin/fm-push-monitor.sh owns wakes ----------
+fm_push_monitor_owns "$STATE" "$CONFIG" && exit 0
+
 # --- need: whatever bin/fm-supervision-lib.sh counts as supervision need ------
 need_supervision() {
   fm_supervision_needed "$STATE" "$GRACE"

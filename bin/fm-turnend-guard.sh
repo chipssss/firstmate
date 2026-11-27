@@ -223,6 +223,9 @@ budget_reset() {
   fm_lock_release "$BUDGET_LOCK"
 }
 
+# A live push-only monitor (bin/fm-push-monitor.sh) supervises this home; let the turn end.
+fm_push_monitor_owns "$STATE" "$CONFIG" && allow_exit
+
 fm_supervision_status "$STATE" "$GRACE"
 if [ "$FM_SUP_NEEDED" = false ]; then
   [ -e "$FAILURE_NOTICE" ] || budget_reset
