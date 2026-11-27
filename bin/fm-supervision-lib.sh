@@ -46,10 +46,13 @@ fm_sup_stat_mtime() {
 # Always returns 0; callers read the vars, or use fm_supervision_unhealthy below.
 # fm_push_monitor_owns <state-dir> <config-dir>: true when this home opted into push-only supervision
 # (config/push-monitor present) and bin/fm-push-monitor.sh refreshed its beat within FM_PUSH_MONITOR_GRACE
-# seconds (default 120). The Claude Stop hooks then stand aside; a stale beat hands supervision back to them.
+# seconds (else a number on the first line of config/push-monitor, else 120). The Claude Stop hooks then
+# stand aside; a stale beat hands supervision back to them.
 fm_push_monitor_owns() {
-  local beat="$1/.push-monitor.beat" grace="${FM_PUSH_MONITOR_GRACE:-120}" now mtime
+  local beat="$1/.push-monitor.beat" grace="${FM_PUSH_MONITOR_GRACE:-}" now mtime
   [ -e "$2/push-monitor" ] && [ -f "$beat" ] || return 1
+  [ -n "$grace" ] || grace=$(head -n 1 "$2/push-monitor" 2>/dev/null | tr -cd '0-9')
+  case "$grace" in ''|*[!0-9]*) grace=120 ;; esac
   now=$(date +%s)
   mtime=$(stat -f %m "$beat" 2>/dev/null || stat -c %Y "$beat" 2>/dev/null) || return 1
   [ $(( now - mtime )) -le "$grace" ]

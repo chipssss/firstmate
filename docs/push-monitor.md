@@ -19,7 +19,7 @@ Routine `working`, `resolved` and declared `paused` lines never wake the primary
 ## Replacing the Stop-hook cycle
 
 While it runs, the monitor refreshes `state/.push-monitor.beat` every 30 seconds.
-When the home opts in with a local `config/push-monitor` file and that beat is fresh (within `FM_PUSH_MONITOR_GRACE`, default 120 seconds), `bin/fm-claude-stop-autoarm.sh` does not arm the watcher and `bin/fm-turnend-guard.sh` lets every turn end (`fm_push_monitor_owns` in `bin/fm-supervision-lib.sh`).
+When the home opts in with a local `config/push-monitor` file and that beat is fresh (within `FM_PUSH_MONITOR_GRACE`, else the number of seconds on the first line of `config/push-monitor`, else 120), `bin/fm-claude-stop-autoarm.sh` does not arm the watcher and `bin/fm-turnend-guard.sh` lets every turn end (`fm_push_monitor_owns` in `bin/fm-supervision-lib.sh`).
 If the monitor dies, the beat goes stale and both hooks resume ordinary watcher supervision at the next turn end, so supervision never silently lapses.
 To also stop the headless supervision host, add `config/supervision-host-off` ([configuration](configuration.md)).
 
