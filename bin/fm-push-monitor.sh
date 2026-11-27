@@ -40,7 +40,7 @@ emit() {
   [ "$ONCE" = 1 ] && exit 0
   return 0
 }
-waits_on_captain='^paused .*(review|captain|approv|批准|复看)'
+waits_on_captain='^paused .*((^|[^p])review|captain|approv|批准|复看)'
 
 case "${1:-}" in
   --baseline)
